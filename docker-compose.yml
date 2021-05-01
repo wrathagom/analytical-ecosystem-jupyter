@@ -9,4 +9,6 @@ services:
       - "./jupyter:/home/jovyan/work"
     environment:
       - JUPYTER_ENABLE_LAB=yes
-
+networks:
+  default:
+    name: my-data-network
