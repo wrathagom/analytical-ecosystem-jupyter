@@ -6,3 +6,6 @@ FROM $STARTER_IMAGE
 # For best maintainability use a specific version.
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
+RUN jupyter labextension install luxwidget
