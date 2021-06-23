@@ -4,3 +4,4 @@ pyarrow==4.0.0
 altair==4.1.0
 pandas-profiling[notebook]==3.0.0
 lux-api==0.3.0
+jupyterlab-drawio==0.9.0
