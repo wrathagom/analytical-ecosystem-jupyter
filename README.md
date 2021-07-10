@@ -1,6 +1,6 @@
-# base-jupyter-lab
+# Personal Analytical Ecosystem: Jupyter
 
-Thanks for coming to check out my analytical ecosystem! This is what I consider the core of the entire system: Jupyter. With it I can bring data in from anywhere, move data out to anywhere, and do whatever analyssi or transformation needs to be done in the middle.
+Thanks for coming to check out my [analytical ecosystem](https://calebmkeller.com/building-a-personal-analytical-ecosystem/)! This is what I consider the core of the entire system: Jupyter. With it I can bring data in from anywhere, move data out to anywhere, and do whatever analyssi or transformation needs to be done in the middle.
 
 ## Installation
 
