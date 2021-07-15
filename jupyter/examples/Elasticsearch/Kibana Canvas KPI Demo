@@ -1,0 +1,179 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "5743d050-af75-4e3d-9fc4-5789af250454",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from datetime import datetime\n",
+    "from elasticsearch import Elasticsearch\n",
+    "from elasticsearch.helpers import bulk\n",
+    "import pandas as pd\n",
+    "import tqdm\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "364f9489-5711-4e73-af37-e3a5f00d6f62",
+   "metadata": {},
+   "source": [
+    "For our *analytical ecosystem* each service we add will be available at the name we use in the `docker-compose` file for that service. In this case Elasticsearch. is available at... `elasticsearch`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "453286ea-d488-4f91-836e-d699b8bd8775",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "es = Elasticsearch(['elasticsearch'])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7459b133-434a-449f-a023-cda7bd75c961",
+   "metadata": {},
+   "source": [
+    "And just for good measure, we'll make sure we can connect."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "6056b7ed-5c64-4b51-87e1-d5b34eb37bd7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'cluster_name': 'docker-cluster',\n",
+       " 'status': 'yellow',\n",
+       " 'timed_out': False,\n",
+       " 'number_of_nodes': 1,\n",
+       " 'number_of_data_nodes': 1,\n",
+       " 'active_primary_shards': 10,\n",
+       " 'active_shards': 10,\n",
+       " 'relocating_shards': 0,\n",
+       " 'initializing_shards': 0,\n",
+       " 'unassigned_shards': 2,\n",
+       " 'delayed_unassigned_shards': 0,\n",
+       " 'number_of_pending_tasks': 0,\n",
+       " 'number_of_in_flight_fetch': 0,\n",
+       " 'task_max_waiting_in_queue_millis': 0,\n",
+       " 'active_shards_percent_as_number': 83.33333333333334}"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "es.cluster.health()\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cd410d3b-d5f7-4a52-84fe-d7ff76377a05",
+   "metadata": {},
+   "source": [
+    "Moving data to Elasticsearch from a DataFrame isn't as simple as it should be, at least in my opinion. I should probably fix that someday and create a pandas library to package some of this up. Until then, we'll define a few functions to get us going."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "6298f87e-ba63-4865-9734-4defa611fb5a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# For each date column that we need to sanitize we repeat the below line:\n",
+    "# df['goodDateField'] = df['PossiblyBlankDateField'].apply(safe_date)\n",
+    "\n",
+    "# For each string column that we need to sanitize we repeat the below line:\n",
+    "# df['goodStringField'] = df['PossiblyBlankField'].apply(safe_value)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "5f944807-65d3-4f2e-a948-73f4db3cded1",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'acknowledged': True}"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "es.indices.delete(index='my-kpi-index', ignore=[400, 404])\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "f85847dd-9c30-4d5b-a608-c4810772a564",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "response: {'_index': 'my-kpi-index', '_type': '_doc', '_id': 'primaryKPI', '_version': 1, 'result': 'created', '_shards': {'total': 2, 'successful': 1, 'failed': 0}, '_seq_no': 0, '_primary_term': 1}\n"
+     ]
+    }
+   ],
+   "source": [
+    "response = es.index(\n",
+    "    index = 'my-kpi-index',\n",
+    "#     doc_type = '_doc',\n",
+    "    id = 'primaryKPI',\n",
+    "    body = {\n",
+    "        'totalSales': '$3,574,523.45'\n",
+    "    },\n",
+    "    request_timeout=45\n",
+    ")\n",
+    "\n",
+    "print (\"response:\", response)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "829d8693-3d38-4f94-877a-58ac5281e42a",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
