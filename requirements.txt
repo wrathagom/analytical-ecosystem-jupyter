@@ -1,9 +1,15 @@
-ipython-sql==0.4.0
-pymssql==2.2.1
-pyarrow==4.0.0
-altair==4.1.0
-pandas-profiling[notebook]==3.0.0
-lux-api==0.3.0
-jupyterlab-drawio==0.9.0
-elasticsearch==7.13.2
-psycopg2-binary==2.9.1
+# SQL Magic and Database Connectors
+ipython-sql==0.5.0
+psycopg2-binary==2.9.10
+
+# Data Processing
+pyarrow==19.0.0
+
+# Visualization
+altair==5.5.0
+
+# Data Profiling (replacement for deprecated pandas-profiling)
+ydata-profiling[notebook]==4.18.0
+
+# Elasticsearch client (version 8.x compatible)
+elasticsearch==8.17.0
